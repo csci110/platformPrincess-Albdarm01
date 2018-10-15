@@ -84,8 +84,8 @@ class princess extends Sprite {
             this.y = this.y - 1.25 * this.height; //jump
         }
     }
-    handleBoundryContact() {
-        game.end('princess Ann has drowned \n\nBetter luck next time. ');
+    handleBoundaryContact() {
+        game.end('princess Ann has drowned.\n\nBetter luck next time.');
         this.true;
     }
 }
