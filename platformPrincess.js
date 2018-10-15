@@ -70,7 +70,66 @@ class princess extends Sprite {
             this.playAnimation("left", true);
         }
         this.x = Math.max(5, this.x);
-
+        this.isFalling = false; // assume she is not falling unless proven otherwise
+        // Check directly below princess for supports
+        let supports = game.getSpritesOverlapping(this.x, this.y + this.height, this.width, 1, Support);
+        // Is there none, or is its *top* above the bottom of the princess?
+        if (supports.length === 0 || supports[0].y < this.y + this.height) {
+            this.isFalling = true; // she is falling so ...
+            this.y = this.y + 4; // simulate gravity
+        }
+    }
+    handleSpacebar() {
+        if (!this.isFalling) {
+            this.y = this.y - 1.25 * this.height; //jump
+        }
+    }
+    handleBoundryContact() {
+        game.end('princess Ann has drowned \n\nBetter luck next time. ');
+        this.true;
     }
 }
-let ann = new princess();
+let ann = new princess(40, 300, "ann.png");
+
+class Door extends Sprite {
+    constructor(x, y, ) {
+        super();
+        this.name = "door";
+        this.setImage("door.png");
+        this.accelerateOnBounce = false;
+        this.x = x;
+        this.y = y;
+
+    }
+    handleCollision(otherSprite) {
+        if (otherSprite === ann) {
+            game.end('Congratulations!\n\nPrincess Ann can now pursue' +
+            'the\nstranger deeper into the castle!')
+        }
+    }
+}
+let exit = new Door(game.displayWidth - 48, finishPlatform.y - 2 * 48);
+
+class Spider extends Sprite {
+    constructor(x, y) {
+        super(x, y);
+        this.name = "Enemy Spider";
+        this.setImage("spider.png");
+        this.x = x;
+        this.y = y;
+        this.speed = 48;
+        this.accelerateOnBounce = false;
+        this.defineAnimation("creep",0 , 2);
+        this.playAnimation("creep", true);
+    }
+    handleGameLoop() {
+        if(this.Spider >= game.displayHeight) {
+            this.angle === 270;
+        }
+        if(this.spider >= game.displayHeight) {
+            this.angle === 90;
+        }
+    }
+}
+new Spider(200, 225);
+new Spider(550, 200);
