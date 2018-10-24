@@ -92,7 +92,7 @@ class princess extends Sprite {
 let ann = new princess(40, 300, "ann.png");
 
 class Door extends Sprite {
-    constructor(x, y, ) {
+    constructor(x, y) {
         super();
         this.name = "door";
         this.setImage("door.png");
@@ -104,7 +104,7 @@ class Door extends Sprite {
     handleCollision(otherSprite) {
         if (otherSprite === ann) {
             game.end('Congratulations!\n\nPrincess Ann can now pursue' +
-            'the\nstranger deeper into the castle!')
+                'the\nstranger deeper into the castle!');
         }
     }
 }
@@ -119,17 +119,96 @@ class Spider extends Sprite {
         this.y = y;
         this.speed = 48;
         this.accelerateOnBounce = false;
-        this.defineAnimation("creep",0 , 2);
+        this.defineAnimation("creep", 0, 2);
         this.playAnimation("creep", true);
     }
     handleGameLoop() {
-        if(this.Spider >= game.displayHeight) {
-            this.angle === 270;
+        if (this.y < ann.y - 48) {
+            this.angle = 270;
         }
-        if(this.spider >= game.displayHeight) {
-            this.angle === 90;
+        if (this.y > ann.y) {
+            this.angle = 90;
         }
+    }
+    handleCollision(otherSprite) {
+        // Spiders only care about collisons with Ann.
+        if (otherSprite === ann) {
+            // Spiders must hit Ann on top of her head.
+            let horizontalOffset = this.x - otherSprite.x;
+            let verticalOffset = this.y - otherSprite.y;
+            if (Math.abs(horizontalOffset) < this.width / 2 &&
+                Math.abs(verticalOffset) < 30) {
+                otherSprite.y = otherSprite.y + 1; // knock Ann off platform
+            }
+        }
+        return false;
     }
 }
 new Spider(200, 225);
 new Spider(550, 200);
+
+class Bat extends Sprite {
+    constructor(x, y) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.setImage("bat.png");
+        this.name = "A scary bat";
+        this.defineAnimation("flap", 0, 1);
+        this.playAnimation("flap", true);
+        this.speed = this.normalSpeed = 20;
+        this.angle = 200;
+        this.attackSpeed = 300;
+        this.angle = 45 + Math.round(Math.random() * 3) *90;
+        this.angleTimer = 0;
+        this.x = this.startX = x;
+        this.y = this.startY = y;
+
+    }
+    attack() {
+        this.speed = this.attackSpeed;
+        this.aimFor(ann.x, ann.y);
+    }
+    handleCollision(otherSprite) {
+        if (otherSprite === ann) {
+            otherSprite.y = otherSprite.y + 1; // knock Ann off platform
+        }
+        return false;
+    }
+    handleGameLoop() {
+        if (Math.random() < 0.001) {
+            this.attack();
+            // if bat is not attacking: hover
+            if (this.speed === this.normalSpeed) {
+
+
+            }
+            // start a 5-second timer
+            let now = game.getTime(); // now is current time
+            if (now - this.angleTimer > 3) { // if 3 seconds have elapsed since reset
+                this.angleTimer = 0; // reset timer
+                // Add code here that you want to repeat every 3 seconds
+
+                if (Math.random() < 0.5) {
+                    this.angle = this.angle + 90;
+                }
+                if (Math.random() > 0.5) {
+                    this.angle = this.angle + 180;
+                }
+            }
+        }
+    }
+    handleBoundaryContact() {
+        if (this.y <= 0) {
+            this.y = 0;
+        }
+        if(this.y > game.displayHeight) {
+            this.y = this.startY;
+            this.speed = this.normalSpeed;
+            this.angle = this.angle = 225;
+        }
+    }
+}
+
+let leftBat = new Bat(200, 100);
+let rightBat = new Bat(500, 75)
