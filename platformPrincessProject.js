@@ -1,5 +1,5 @@
 import { game, Sprite } from "./sgc/sgc.js";
-game.setBackground("water.png");
+game.setBackground("Cemetery.png");
 
 class Wall extends Sprite {
     constructor(x, y) {
